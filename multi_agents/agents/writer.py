@@ -5,10 +5,15 @@ from .utils.llms import call_model
 
 sample_json = """
 {
-  "table_of_contents": A table of contents in markdown syntax (using '-') based on the research headers and subheaders,
-  "introduction": An indepth introduction to the topic in markdown syntax and hyperlink references to relevant sources,
-  "conclusion": A conclusion to the entire research based on all research data in markdown syntax and hyperlink references to relevant sources,
-  "sources": A list with strings of all used source links in the entire research data in markdown syntax and apa citation format. For example: ['-  Title, year, Author [source url](source)', ...]
+  "table_of_contents": A table of contents in markdown syntax (using '-') based on the metrics and calculations,
+  "introduction": An introduction explaining the simulation model's purpose and approach,
+  "metrics_documentation": A detailed documentation of each metric including:
+    - Description and rationale
+    - Equation and parameters
+    - Parameter values and sources
+    - Calculation results and assumptions,
+  "conclusion": A summary of the key findings and potential impact,
+  "sources": A list of all parameter sources in APA format
 }
 """
 
@@ -25,37 +30,44 @@ class WriterAgent:
             "date": "Date",
             "introduction": "Introduction",
             "table_of_contents": "Table of Contents",
+            "metrics": "Impact Metrics and Calculations",
             "conclusion": "Conclusion",
-            "references": "References",
+            "references": "Parameter Sources",
         }
 
     async def write_sections(self, research_state: dict):
-        query = research_state.get("title")
-        data = research_state.get("research_data")
+        """Write the simulation model documentation."""
+        metrics = research_state.get("outcome_metrics", [])
+        parameters = research_state.get("parameters", {})
+        calculations = research_state.get("calculations", {})
         task = research_state.get("task")
-        follow_guidelines = task.get("follow_guidelines")
-        guidelines = task.get("guidelines")
-
+        
         prompt = [
             {
                 "role": "system",
-                "content": "You are a research writer. Your sole purpose is to write a well-written "
-                "research reports about a "
-                "topic based on research findings and information.\n ",
+                "content": "You are a technical writer specializing in quantitative impact modeling. "
+                "Your goal is to clearly document simulation models, their calculations, and results.",
             },
             {
                 "role": "user",
-                "content": f"Today's date is {datetime.now().strftime('%d/%m/%Y')}\n."
-                f"Query or Topic: {query}\n"
-                f"Research data: {str(data)}\n"
-                f"Your task is to write an in depth, well written and detailed "
-                f"introduction and conclusion to the research report based on the provided research data. "
-                f"Do not include headers in the results.\n"
-                f"You MUST include any relevant sources to the introduction and conclusion as markdown hyperlinks -"
-                f"For example: 'This is a sample text. ([url website](url))'\n\n"
-                f"{f'You must follow the guidelines provided: {guidelines}' if follow_guidelines else ''}\n"
-                f"You MUST return nothing but a JSON in the following format (without json markdown):\n"
-                f"{sample_json}\n\n",
+                "content": f"""Today's date is {datetime.now().strftime('%d/%m/%Y')}\n
+                Simulation metrics: {json.dumps(metrics, indent=2)}
+                Parameter values: {json.dumps(parameters, indent=2)}
+                Calculation results: {json.dumps(calculations, indent=2)}
+                
+                Write a clear technical document that:
+                1. Introduces the simulation model's purpose
+                2. Documents each metric's calculation approach
+                3. Lists parameter values and their sources
+                4. Presents the calculated results
+                5. Summarizes the key findings
+                
+                The document should be suitable for government health agencies.
+                Include hyperlinks to parameter sources.
+                
+                Return a JSON matching this format:
+                {sample_json}
+                """,
             },
         ]
 

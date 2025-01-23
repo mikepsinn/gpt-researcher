@@ -1,5 +1,5 @@
 {
-  "query": "A quantitative model to simulate the population level health and economic impact of a 2lb reduction in fat mass and a 2lb increase in muscle mass?",
+  "query": "What are the specific quantitative population level health and economic impact of a 2lb reduction in fat mass and a 2lb increase in muscle mass?",
   "max_sections": 3,
   "publish_formats": {
     "markdown": true,
@@ -10,9 +10,6 @@
   "follow_guidelines": false,
   "model": "gpt-4o-mini",
   "guidelines": [
-    "Make sure to list all relevant outcome metrics",
-    "Make sure to list all relevant input parameters",
-    "Make sure to find the best estimates for all input parameter values and hyperlink to their sources",
     "Each sub section MUST include supporting sources using hyperlinks. If none exist, erase the sub section or rewrite it to be a part of the previous section",
     "This is for submission to government health agencies to support an intervention that can reduce fat mass by 2lbs and increase muscle mass by 2lbs",
     "Should include a mathematical model that can be used to estimate the health and economic impact of the intervention",

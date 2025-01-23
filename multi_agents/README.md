@@ -82,7 +82,7 @@ To change the research query and customize the report, edit the `task.json` file
   "max_sections": 3, 
   "publish_formats": { 
     "markdown": true,
-    "pdf": true,
+    "pdf": false,
     "docx": true
   },
   "include_human_feedback": false,

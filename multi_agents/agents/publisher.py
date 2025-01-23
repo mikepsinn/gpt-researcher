@@ -20,26 +20,30 @@ class PublisherAgent:
         return layout
 
     def generate_layout(self, research_state: dict):
-        sections = '\n\n'.join(f"{value}"
-                                 for subheader in research_state.get("research_data")
-                                 for key, value in subheader.items())
-        references = '\n'.join(f"{reference}" for reference in research_state.get("sources"))
-        headers = research_state.get("headers")
-        layout = f"""# {headers.get('title')}
+        """Generate the layout for the simulation model documentation."""
+        # Get the metrics documentation which includes calculations and results
+        metrics_doc = research_state.get("metrics_documentation", "")
+        
+        # Get other sections
+        references = '\n'.join(f"{reference}" for reference in research_state.get("sources", []))
+        headers = research_state.get("headers", {})
+        
+        layout = f"""# {headers.get('title', 'Population Health Impact Simulation Model')}
 #### {headers.get("date")}: {research_state.get('date')}
 
-## {headers.get("introduction")}
-{research_state.get('introduction')}
+## {headers.get("introduction", "Introduction")}
+{research_state.get('introduction', '')}
 
-## {headers.get("table_of_contents")}
-{research_state.get('table_of_contents')}
+## {headers.get("table_of_contents", "Table of Contents")}
+{research_state.get('table_of_contents', '')}
 
-{sections}
+## {headers.get("metrics", "Impact Metrics and Calculations")}
+{metrics_doc}
 
-## {headers.get("conclusion")}
-{research_state.get('conclusion')}
+## {headers.get("conclusion", "Conclusion")}
+{research_state.get('conclusion', '')}
 
-## {headers.get("references")}
+## {headers.get("references", "Parameter Sources")}
 {references}
 """
         return layout
