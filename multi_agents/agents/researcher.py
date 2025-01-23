@@ -43,18 +43,18 @@ class ResearchAgent:
         return {"task": task, "initial_research": await self.research(query=query, verbose=task.get("verbose"),
                                                                       source=source, tone=self.tone, headers=self.headers)}
 
-    async def run_depth_research(self, draft_state: dict):
+    async def run_depth_research(self, parameter_state: dict):
         """Research to find values and sources for simulation parameters."""
-        if not draft_state:
-            raise ValueError("draft_state cannot be None")
+        if not parameter_state:
+            raise ValueError("parameter_state cannot be None")
             
-        task = draft_state.get("task")
+        task = parameter_state.get("task")
         if not task:
-            raise ValueError("task cannot be None in draft_state")
+            raise ValueError("task cannot be None in parameter_state")
             
-        parameter = draft_state.get("parameter")
+        parameter = parameter_state.get("parameter")
         if not parameter:
-            raise ValueError(f"parameter cannot be None or empty in draft_state. Full draft_state: {draft_state}")
+            raise ValueError(f"parameter cannot be None or empty in parameter_state. Full state: {parameter_state}")
             
         parent_query = task.get("query")
         if not parent_query:
@@ -117,6 +117,7 @@ class ResearchAgent:
                 }
             ]
             
+            from .utils.llms import call_model
             extracted_data = await call_model(
                 prompt=prompt,
                 model=task.get("model"),
@@ -128,4 +129,9 @@ class ResearchAgent:
         except Exception as e:
             print(f"{Fore.RED}Error extracting parameter data: {e}{Style.RESET_ALL}")
             
-        return {"parameter_data": parameter_data}
+        # Return in ParameterState format
+        return {
+            "task": task,
+            "parameter": parameter,
+            "parameter_data": parameter_data
+        }
